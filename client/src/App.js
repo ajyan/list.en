@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import SpotifyWebApi from 'spotify-web-api-js';
 import buildChart from './radarChart.js';
+import Progress from './components/Progress';
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
@@ -113,40 +114,7 @@ class App extends Component {
           <div className="column" id="chartContainer">
             <canvas id="radarChart" />
           </div>
-          <div className="column is-hcentered progressBars">
-            <progress
-              className="progress is-primary"
-              value={this.state.audioFeatures.acousticness}
-              max="1"
-            />
-            <progress
-              className="progress is-link"
-              value={this.state.audioFeatures.danceability}
-              max="1"
-            />
-
-            <progress
-              className="progress is-danger"
-              value={this.state.audioFeatures.energy}
-              max="1"
-            />
-            <progress
-              className="progress is-success"
-              value={this.state.audioFeatures.liveness}
-              max="1"
-            />
-            <progress
-              className="progress is-warning"
-              value={this.state.audioFeatures.valence}
-              max="1"
-            />
-
-            <progress
-              className="progress is-info"
-              value={this.state.audioFeatures.instrumentalness}
-              max="1"
-            />
-          </div>
+          <Progress audioFeatures={this.state.audioFeatures} />
         </div>
         <nav className="level">
           <div className="level-item has-text-centered">

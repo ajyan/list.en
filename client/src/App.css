@@ -37,13 +37,8 @@
   }
 }
 
-.progressBars{
-  height:100%;
-  width: 100%
-}
-
 #radarChart {
-  height: 100%
+  height: 90%;
 }
 
 #chartContainer {
