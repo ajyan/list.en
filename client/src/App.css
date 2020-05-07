@@ -37,6 +37,19 @@
   }
 }
 
+.progressBars{
+  height:100%;
+  width: 100%
+}
+
+#radarChart {
+  height: 100%
+}
+
+#chartContainer {
+  height: 50vh
+}
+
 #playlistContainer {
   overflow-y: scroll;
   height: 50vh;

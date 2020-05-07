@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import SpotifyWebApi from 'spotify-web-api-js';
+import buildChart from './radarChart.js';
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
@@ -23,6 +24,19 @@ class App extends Component {
     };
     this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
     this.handleSongChange = this.handleSongChange.bind(this);
+  }
+
+  getHashParams() {
+    var hashParams = {};
+    var e,
+      r = /([^&;=]+)=?([^&;]*)/g,
+      q = window.location.hash.substring(1);
+    e = r.exec(q);
+    while (e) {
+      hashParams[e[1]] = decodeURIComponent(e[2]);
+      e = r.exec(q);
+    }
+    return hashParams;
   }
 
   getUserPlaylists() {
@@ -48,22 +62,13 @@ class App extends Component {
 
   getAudioFeatures(trackId) {
     spotifyApi.getAudioFeaturesForTrack(trackId).then((res) => {
-      console.log(res);
-      this.setState({ audioFeatures: res });
+      this.setState({ audioFeatures: res }, () => {
+        buildChart(
+          this.state.audioFeatures,
+          this.state.tracks[this.state.trackIndex].track.name
+        );
+      });
     });
-  }
-
-  getHashParams() {
-    var hashParams = {};
-    var e,
-      r = /([^&;=]+)=?([^&;]*)/g,
-      q = window.location.hash.substring(1);
-    e = r.exec(q);
-    while (e) {
-      hashParams[e[1]] = decodeURIComponent(e[2]);
-      e = r.exec(q);
-    }
-    return hashParams;
   }
 
   handlePlaylistChange(e) {
@@ -88,25 +93,75 @@ class App extends Component {
   componentDidMount() {
     this.getUserPlaylists();
   }
+
   render() {
     return (
       <div className="App">
-        <a href="http://localhost:8888"> Login to Spotify </a>
+        {!this.state.loggedIn && (
+          <a href="http://localhost:8888"> Login to Spotify </a>
+        )}
+        <section class="hero is-primary is-bold">
+          <div class="hero-body">
+            <div class="container">
+              <h1 class="title">Audoo</h1>
+            </div>
+          </div>
+        </section>
+        <br />
+        <div className="columns">
+          <div className="column"></div>
+          <div className="column" id="chartContainer">
+            <canvas id="radarChart" />
+          </div>
+          <div className="column is-hcentered progressBars">
+            <progress
+              className="progress is-primary"
+              value={this.state.audioFeatures.acousticness}
+              max="1"
+            />
+            <progress
+              className="progress is-link"
+              value={this.state.audioFeatures.danceability}
+              max="1"
+            />
 
-        <nav class="level">
-          <div class="level-item has-text-centered">
+            <progress
+              className="progress is-danger"
+              value={this.state.audioFeatures.energy}
+              max="1"
+            />
+            <progress
+              className="progress is-success"
+              value={this.state.audioFeatures.liveness}
+              max="1"
+            />
+            <progress
+              className="progress is-warning"
+              value={this.state.audioFeatures.valence}
+              max="1"
+            />
+
+            <progress
+              className="progress is-info"
+              value={this.state.audioFeatures.instrumentalness}
+              max="1"
+            />
+          </div>
+        </div>
+        <nav className="level">
+          <div className="level-item has-text-centered">
             <div>
-              <p class="title">Playlists</p>
+              <p className="title">Playlists</p>
             </div>
           </div>
-          <div class="level-item has-text-centered">
+          <div className="level-item has-text-centered">
             <div>
-              <p class="title">Tracks</p>
+              <p className="title">Tracks</p>
             </div>
           </div>
-          <div class="level-item has-text-centered">
+          <div className="level-item has-text-centered">
             <div>
-              <p class="title">Charts</p>
+              <p className="title">Player</p>
             </div>
           </div>
         </nav>
@@ -115,13 +170,17 @@ class App extends Component {
             {this.state.playlists &&
               this.state.playlists.map((playlist, i) => {
                 return (
-                  <div
-                    id={i}
-                    value={i}
-                    className="box playlistButtons"
-                    onClick={this.handlePlaylistChange}
-                  >
-                    {playlist.name}
+                  <div>
+                    <br />
+                    <div
+                      id={i}
+                      key={i}
+                      className="button is-large is-primary playlistButtons"
+                      onClick={this.handlePlaylistChange}
+                    >
+                      {playlist.name}
+                    </div>
+                    <br />
                   </div>
                 );
               })}
@@ -129,77 +188,34 @@ class App extends Component {
           <div className="column" id="trackContainer">
             {this.state.tracks.map(({ track }, i) => {
               return (
-                <div
-                  id={i}
-                  value={i}
-                  className="box playlistButtons"
-                  onClick={this.handleSongChange}
-                >
-                  {track.name}
+                <div>
+                  <br />
+                  <div
+                    id={i}
+                    key={i}
+                    className="button is-large is-primary is-light playlistButtons"
+                    onClick={this.handleSongChange}
+                  >
+                    {track.name}
+                  </div>
+                  <br />
                 </div>
               );
             })}
           </div>
           <div className="column">
-            <progress
-              class="progress is-primary"
-              value={this.state.audioFeatures.acousticness}
-              max="1"
-            >
-              15%
-            </progress>
-            <progress
-              class="progress is-link"
-              value={this.state.audioFeatures.danceability}
-              max="1"
-            >
-              30%
-            </progress>
-            <progress
-              class="progress is-danger"
-              value={this.state.audioFeatures.energy}
-              max="1"
-            >
-              45%
-            </progress>
-            <progress
-              class="progress is-success"
-              value={this.state.audioFeatures.liveness}
-              max="1"
-            >
-              60%
-            </progress>
-            <progress
-              class="progress is-warning"
-              value={this.state.audioFeatures.valence}
-              max="1"
-            >
-              75%
-            </progress>
-            <progress
-              class="progress is-info"
-              value={this.state.audioFeatures.instrumentalness}
-              max="1"
-            >
-              90%
-            </progress>
-          </div>
-        </div>
-        <div className="columns">
-          <div className="column"></div>
-          <div className="column">
             {this.state.playlistId && (
               <iframe
+                title="spotifyPlayer"
                 src={`https://open.spotify.com/embed/playlist/${this.state.playlistId}`}
-                width="300"
-                height="80"
+                width="100%"
+                height="380"
                 frameBorder="0"
                 allowtransparency="true"
                 allow="encrypted-media"
               ></iframe>
             )}
           </div>
-          <div className="column"></div>
         </div>
       </div>
     );
