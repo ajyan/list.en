@@ -22,6 +22,7 @@ class App extends Component {
       trackIndex: '',
       trackId: '',
       audioFeatures: [],
+      playlistFeatures: {},
     };
     this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
     this.handleSongChange = this.handleSongChange.bind(this);
@@ -58,6 +59,7 @@ class App extends Component {
   getPlaylistTracks(id) {
     spotifyApi.getPlaylistTracks(id).then(({ items }) => {
       this.setState({ tracks: items });
+      this.calculateAverages(items);
     });
   }
 
@@ -66,10 +68,47 @@ class App extends Component {
       this.setState({ audioFeatures: res }, () => {
         buildChart(
           this.state.audioFeatures,
-          this.state.tracks[this.state.trackIndex].track.name
+          this.state.tracks[this.state.trackIndex].track.name,
+          this.state.playlistFeatures,
+          this.state.playlists[this.state.playlistIndex].name
         );
       });
     });
+  }
+
+  calculateAverages(items) {
+    let playlistFeatures = {
+      acousticness: 0,
+      danceability: 0,
+      energy: 0,
+      valence: 0,
+      instrumentalness: 0,
+      liveness: 0,
+    };
+    let ids = [];
+
+    for (let item of items) {
+      ids.push(item.track.id);
+    }
+
+    spotifyApi
+      .getAudioFeaturesForTracks(ids)
+      .then(({ audio_features }) => {
+        for (let feature of audio_features) {
+          playlistFeatures.acousticness += feature.acousticness;
+          playlistFeatures.danceability += feature.danceability;
+          playlistFeatures.energy += feature.energy;
+          playlistFeatures.valence += feature.valence;
+          playlistFeatures.liveness += feature.liveness;
+          playlistFeatures.instrumentalness = feature.instrumentalness;
+        }
+        for (let feature in playlistFeatures) {
+          playlistFeatures[feature] /= ids.length;
+        }
+      })
+      .then(() => {
+        this.setState({ playlistFeatures: playlistFeatures });
+      });
   }
 
   handlePlaylistChange(e) {
@@ -101,10 +140,10 @@ class App extends Component {
         {!this.state.loggedIn && (
           <a href="http://localhost:8888"> Login to Spotify </a>
         )}
-        <section class="hero is-primary is-bold">
-          <div class="hero-body">
-            <div class="container">
-              <h1 class="title">Audoo</h1>
+        <section className="hero is-primary is-bold">
+          <div className="hero-body">
+            <div className="container">
+              <h1 className="title">Audoo</h1>
             </div>
           </div>
         </section>
