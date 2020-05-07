@@ -13,33 +13,43 @@ class App extends Component {
     }
     this.state = {
       loggedIn: token ? true : false,
-      nowPlaying: { name: 'Not Checked', albumArt: '' },
       playlists: [],
       playlistIndex: 0,
+      playlistId: '',
+      tracks: [],
+      trackIndex: '',
+      trackId: '',
+      audioFeatures: [],
     };
+    this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
+    this.handleSongChange = this.handleSongChange.bind(this);
   }
 
   getUserPlaylists() {
     spotifyApi
       .getUserPlaylists() // note that we don't pass a user id
       .then(({ items }) => {
-        this.setState({ playlists: items });
-        console.log('User playlists', items);
+        this.setState({ playlists: items }, () => {
+          this.setState({
+            playlistId: this.state.playlists[this.state.playlistIndex].id,
+          });
+        });
       })
       .catch((err) => {
         console.log('Error retrieving playlists', err);
       });
   }
 
-  getNowPlaying() {
-    spotifyApi.getMyCurrentPlaybackState().then((response) => {
-      console.log('this', response);
-      this.setState({
-        nowPlaying: {
-          name: response.item.name,
-          albumArt: response.item.album.images[0].url,
-        },
-      });
+  getPlaylistTracks(id) {
+    spotifyApi.getPlaylistTracks(id).then(({ items }) => {
+      this.setState({ tracks: items });
+    });
+  }
+
+  getAudioFeatures(trackId) {
+    spotifyApi.getAudioFeaturesForTrack(trackId).then((res) => {
+      console.log(res);
+      this.setState({ audioFeatures: res });
     });
   }
 
@@ -55,31 +65,142 @@ class App extends Component {
     }
     return hashParams;
   }
+
+  handlePlaylistChange(e) {
+    let playlistIndex = e.currentTarget.id;
+    this.setState({ playlistIndex: playlistIndex });
+    this.setState(
+      { playlistId: this.state.playlists[playlistIndex].id },
+      () => {
+        this.getPlaylistTracks(this.state.playlistId);
+      }
+    );
+  }
+
+  handleSongChange(e) {
+    let trackIndex = e.currentTarget.id;
+    this.setState({ trackIndex: trackIndex });
+    this.setState({ trackId: this.state.tracks[trackIndex].track.id }, () => {
+      this.getAudioFeatures(this.state.trackId);
+    });
+  }
+
+  componentDidMount() {
+    this.getUserPlaylists();
+  }
   render() {
     return (
       <div className="App">
         <a href="http://localhost:8888"> Login to Spotify </a>
-        <div>Now Playing: {this.state.nowPlaying.name}</div>
-        <div>
-          <img src={this.state.nowPlaying.albumArt} />
-        </div>
-        {this.state.loggedIn && (
-          <button
-            onClick={() => {
-              // this.getNowPlaying();
-              this.getUserPlaylists();
-            }}
-          >
-            Check now playing
-          </button>
-        )}
-        {this.state.playlists.map((playlist, i) => {
-          return (
-            <div id={i} value={i}>
-              {playlist.name}
+
+        <nav class="level">
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title">Playlists</p>
             </div>
-          );
-        })}
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title">Tracks</p>
+            </div>
+          </div>
+          <div class="level-item has-text-centered">
+            <div>
+              <p class="title">Charts</p>
+            </div>
+          </div>
+        </nav>
+        <div className="columns">
+          <div className="column" id="playlistContainer">
+            {this.state.playlists &&
+              this.state.playlists.map((playlist, i) => {
+                return (
+                  <div
+                    id={i}
+                    value={i}
+                    className="box playlistButtons"
+                    onClick={this.handlePlaylistChange}
+                  >
+                    {playlist.name}
+                  </div>
+                );
+              })}
+          </div>
+          <div className="column" id="trackContainer">
+            {this.state.tracks.map(({ track }, i) => {
+              return (
+                <div
+                  id={i}
+                  value={i}
+                  className="box playlistButtons"
+                  onClick={this.handleSongChange}
+                >
+                  {track.name}
+                </div>
+              );
+            })}
+          </div>
+          <div className="column">
+            <progress
+              class="progress is-primary"
+              value={this.state.audioFeatures.acousticness}
+              max="1"
+            >
+              15%
+            </progress>
+            <progress
+              class="progress is-link"
+              value={this.state.audioFeatures.danceability}
+              max="1"
+            >
+              30%
+            </progress>
+            <progress
+              class="progress is-danger"
+              value={this.state.audioFeatures.energy}
+              max="1"
+            >
+              45%
+            </progress>
+            <progress
+              class="progress is-success"
+              value={this.state.audioFeatures.liveness}
+              max="1"
+            >
+              60%
+            </progress>
+            <progress
+              class="progress is-warning"
+              value={this.state.audioFeatures.valence}
+              max="1"
+            >
+              75%
+            </progress>
+            <progress
+              class="progress is-info"
+              value={this.state.audioFeatures.instrumentalness}
+              max="1"
+            >
+              90%
+            </progress>
+          </div>
+        </div>
+        <div className="columns">
+          <div className="column"></div>
+          <div className="column">
+            {this.state.playlistId && (
+              <iframe
+                src={`https://open.spotify.com/embed/playlist/${this.state.playlistId}`}
+                width="300"
+                height="80"
+                frameBorder="0"
+                allowtransparency="true"
+                allow="encrypted-media"
+              ></iframe>
+            )}
+          </div>
+          <div className="column"></div>
+        </div>
       </div>
     );
   }

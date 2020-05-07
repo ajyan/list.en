@@ -36,3 +36,17 @@
     transform: rotate(360deg);
   }
 }
+
+#playlistContainer {
+  overflow-y: scroll;
+  height: 50vh;
+}
+
+#trackContainer {
+  overflow-y: scroll;
+  height:50vh;
+}
+
+#playlistButtons:hover {
+  background-color: green;
+}
