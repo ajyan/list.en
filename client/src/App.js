@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 import SpotifyWebApi from 'spotify-web-api-js';
 import buildChart from './radarChart.js';
+import { features } from './components/Features';
 import Progress from './components/Progress';
+import Tracklist from './components/Tracklist';
+import Player from './components/Player';
+import Playlists from './components/Playlists';
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
@@ -23,9 +27,11 @@ class App extends Component {
       trackId: '',
       audioFeatures: [],
       playlistFeatures: {},
+      showModal: false,
     };
     this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
     this.handleSongChange = this.handleSongChange.bind(this);
+    this.handleModal = this.handleModal.bind(this);
   }
 
   getHashParams() {
@@ -104,6 +110,7 @@ class App extends Component {
         }
         for (let feature in playlistFeatures) {
           playlistFeatures[feature] /= ids.length;
+          playlistFeatures[feature] = playlistFeatures[feature].toFixed(4);
         }
       })
       .then(() => {
@@ -124,10 +131,17 @@ class App extends Component {
 
   handleSongChange(e) {
     let trackIndex = e.currentTarget.id;
+    console.log(trackIndex);
     this.setState({ trackIndex: trackIndex });
     this.setState({ trackId: this.state.tracks[trackIndex].track.id }, () => {
       this.getAudioFeatures(this.state.trackId);
     });
+  }
+
+  handleModal(e) {
+    let feature = e.target.id;
+    this.setState({ showModal: !this.state.showModal });
+    this.setState({ featureDefinition: features[feature] });
   }
 
   componentDidMount() {
@@ -138,92 +152,51 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.loggedIn && (
-          <a href="http://localhost:8888"> Login to Spotify </a>
+          <a className="button is-large" href="http://localhost:8888">
+            Login to Spotfiy
+          </a>
         )}
-        <section className="hero is-primary is-bold">
-          <div className="hero-body">
-            <div className="container">
-              <h1 className="title">Audoo</h1>
-            </div>
-          </div>
-        </section>
-        <br />
-        <div className="columns">
-          <div className="column"></div>
-          <div className="column" id="chartContainer">
-            <canvas id="radarChart" />
-          </div>
-          <Progress audioFeatures={this.state.audioFeatures} />
-        </div>
-        <nav className="level">
-          <div className="level-item has-text-centered">
-            <div>
-              <p className="title">Playlists</p>
-            </div>
-          </div>
-          <div className="level-item has-text-centered">
-            <div>
-              <p className="title">Tracks</p>
-            </div>
-          </div>
-          <div className="level-item has-text-centered">
-            <div>
-              <p className="title">Player</p>
-            </div>
-          </div>
-        </nav>
-        <div className="columns">
-          <div className="column" id="playlistContainer">
-            {this.state.playlists &&
-              this.state.playlists.map((playlist, i) => {
-                return (
-                  <div>
-                    <br />
-                    <div
-                      id={i}
-                      key={i}
-                      className="button is-large is-primary playlistButtons"
-                      onClick={this.handlePlaylistChange}
-                    >
-                      {playlist.name}
-                    </div>
-                    <br />
-                  </div>
-                );
-              })}
-          </div>
-          <div className="column" id="trackContainer">
-            {this.state.tracks.map(({ track }, i) => {
-              return (
-                <div>
-                  <br />
-                  <div
-                    id={i}
-                    key={i}
-                    className="button is-large is-primary is-light playlistButtons"
-                    onClick={this.handleSongChange}
-                  >
-                    {track.name}
-                  </div>
-                  <br />
+
+        {this.state.loggedIn && (
+          <div>
+            <section className="hero is-primary is-bold">
+              <div className="hero-body">
+                <div className="container">
+                  <h1 className="title">Audoo</h1>
                 </div>
-              );
-            })}
-          </div>
-          <div className="column">
-            {this.state.playlistId && (
-              <iframe
-                title="spotifyPlayer"
-                src={`https://open.spotify.com/embed/playlist/${this.state.playlistId}`}
-                width="100%"
-                height="380"
-                frameBorder="0"
-                allowtransparency="true"
-                allow="encrypted-media"
-              ></iframe>
+              </div>
+            </section>
+            <br />
+            {this.state.showModal && (
+              <div className="notification">
+                <button className="delete" onClick={this.handleModal}></button>
+                {this.state.featureDefinition}
+              </div>
             )}
+
+            <div className="columns">
+              <div className="column"></div>
+              <div className="column" id="chartContainer">
+                <canvas id="radarChart" />
+              </div>
+              <Progress
+                audioFeatures={this.state.audioFeatures}
+                handleModal={this.handleModal}
+              />
+            </div>
+            <div className="columns is-2">
+              <Playlists
+                playlists={this.state.playlists}
+                handlePlaylistChange={this.handlePlaylistChange}
+              />
+              <Tracklist
+                tracks={this.state.tracks}
+                handleSongChange={this.handleSongChange}
+              />
+              <Player playlistId={this.state.playlistId} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   }

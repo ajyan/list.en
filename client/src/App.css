@@ -47,12 +47,12 @@
 
 #playlistContainer {
   overflow-y: scroll;
-  height: 50vh;
+  height: 65vh;
 }
 
 #trackContainer {
   overflow-y: scroll;
-  height:50vh;
+  height:65vh;
 }
 
 #playlistButtons:hover {

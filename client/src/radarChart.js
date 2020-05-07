@@ -10,7 +10,6 @@ export default function buildChart(
   $('#radarChart').remove();
   $('#chartContainer').prepend('<canvas id="radarChart"/>');
   var ctx = document.getElementById('radarChart').getContext('2d');
-  console.log('made it to the charts', playlistTitle);
   var radarChart = new Chart(ctx, {
     type: 'radar',
     data: {
