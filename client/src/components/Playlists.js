@@ -2,7 +2,7 @@ import React from 'react';
 
 function Playlists(props) {
   return (
-    <div className="box column" id="playlistContainer">
+    <div className="box is-primary column" id="playlistContainer">
       {props.playlists &&
         props.playlists.map((playlist, i) => {
           return (

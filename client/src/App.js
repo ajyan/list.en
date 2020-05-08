@@ -7,6 +7,7 @@ import Progress from './components/Progress';
 import Tracklist from './components/Tracklist';
 import Player from './components/Player';
 import Playlists from './components/Playlists';
+import Table from './components/Table';
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
@@ -28,6 +29,7 @@ class App extends Component {
       audioFeatures: [],
       playlistFeatures: {},
       showModal: false,
+      trackDetails: {},
     };
     this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
     this.handleSongChange = this.handleSongChange.bind(this);
@@ -82,6 +84,12 @@ class App extends Component {
     });
   }
 
+  getTrackDetails(trackId) {
+    spotifyApi.getTrack(trackId).then((res) => {
+      this.setState({ trackDetails: res });
+    });
+  }
+
   calculateAverages(items) {
     let playlistFeatures = {
       acousticness: 0,
@@ -101,12 +109,14 @@ class App extends Component {
       .getAudioFeaturesForTracks(ids)
       .then(({ audio_features }) => {
         for (let feature of audio_features) {
-          playlistFeatures.acousticness += feature.acousticness;
-          playlistFeatures.danceability += feature.danceability;
-          playlistFeatures.energy += feature.energy;
-          playlistFeatures.valence += feature.valence;
-          playlistFeatures.liveness += feature.liveness;
-          playlistFeatures.instrumentalness = feature.instrumentalness;
+          if (feature !== null) {
+            playlistFeatures.acousticness += feature.acousticness;
+            playlistFeatures.danceability += feature.danceability;
+            playlistFeatures.energy += feature.energy;
+            playlistFeatures.valence += feature.valence;
+            playlistFeatures.liveness += feature.liveness;
+            playlistFeatures.instrumentalness = feature.instrumentalness;
+          }
         }
         for (let feature in playlistFeatures) {
           playlistFeatures[feature] /= ids.length;
@@ -131,16 +141,16 @@ class App extends Component {
 
   handleSongChange(e) {
     let trackIndex = e.currentTarget.id;
-    console.log(trackIndex);
     this.setState({ trackIndex: trackIndex });
     this.setState({ trackId: this.state.tracks[trackIndex].track.id }, () => {
       this.getAudioFeatures(this.state.trackId);
+      this.getTrackDetails(this.state.trackId);
     });
   }
 
   handleModal(e) {
     let feature = e.target.id;
-    this.setState({ showModal: !this.state.showModal });
+    this.setState({ showModal: true });
     this.setState({ featureDefinition: features[feature] });
   }
 
@@ -169,13 +179,26 @@ class App extends Component {
             <br />
             {this.state.showModal && (
               <div className="notification">
-                <button className="delete" onClick={this.handleModal}></button>
+                <button
+                  className="delete"
+                  onClick={() => {
+                    this.setState({ showModal: false });
+                  }}
+                ></button>
                 {this.state.featureDefinition}
               </div>
             )}
 
-            <div className="columns">
-              <div className="column"></div>
+            <div className="columns is-2">
+              <div className="column">
+                {this.state.trackDetails.album &&
+                  this.state.audioFeatures.tempo && (
+                    <Table
+                      trackDetails={this.state.trackDetails}
+                      audioFeatures={this.state.audioFeatures}
+                    />
+                  )}
+              </div>
               <div className="column" id="chartContainer">
                 <canvas id="radarChart" />
               </div>

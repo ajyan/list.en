@@ -38,21 +38,21 @@
 }
 
 #radarChart {
-  height: 90%;
+  height: 100%;
 }
 
 #chartContainer {
-  height: 50vh
+  height: 50vh;
 }
 
 #playlistContainer {
   overflow-y: scroll;
-  height: 65vh;
+  height: 50vh;
 }
 
 #trackContainer {
   overflow-y: scroll;
-  height:65vh;
+  height:50vh;
 }
 
 #playlistButtons:hover {
