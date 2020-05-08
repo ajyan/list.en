@@ -162,7 +162,7 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.loggedIn && (
-          <a className="button is-large" href="http://localhost:8888">
+          <a className="button is-large" href="http:/18.219.234.217:8888">
             Login to Spotfiy
           </a>
         )}
