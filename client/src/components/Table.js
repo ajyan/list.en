@@ -11,7 +11,6 @@ let stringifyArtists = (trackArtists) => {
 };
 
 function Table(props) {
-  console.log(props);
   let songKey = props.audioFeatures.key;
   let artists = stringifyArtists(props.trackDetails.artists);
   let tempo = props.audioFeatures.tempo.toFixed(0);

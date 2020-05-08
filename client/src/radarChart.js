@@ -67,6 +67,13 @@ export default function buildChart(
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
+      scale: {
+        ticks: {
+          suggestedMin: 0,
+          suggestedMax: 1,
+        },
+      },
     },
   });
   return radarChart;
