@@ -72,6 +72,7 @@ export default function buildChart(
         ticks: {
           suggestedMin: 0,
           suggestedMax: 1,
+          stepSize: 0.2,
         },
       },
     },

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import SpotifyWebApi from 'spotify-web-api-js';
-import buildChart from './radarChart.js';
+import buildChart from './components/radarChart.js';
 import { features } from './components/Features';
 import Progress from './components/Progress';
 import Tracklist from './components/Tracklist';
@@ -162,7 +162,7 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.loggedIn && (
-          <a className="button is-large" href="http:/18.219.234.217:8888">
+          <a className="button is-large" href="http://3.22.175.136:8888">
             Login to Spotfiy
           </a>
         )}
