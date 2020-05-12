@@ -3,49 +3,71 @@ import React from 'react';
 function Progress(props) {
   return (
     <div className="column is-pulled-left progressBars">
-      <a href="/#" onClick={props.handleModal} id="acousticness">
-        Acousticness
-      </a>
+      Acousticness
+      <span
+        class="icon has-text-info"
+        onClick={props.handleModal}
+        id="acousticness"
+      >
+        <i class="fas fa-info-circle"></i>
+      </span>
       <progress
         className="progress is-primary is-medium"
         value={props.audioFeatures.acousticness}
         max="1"
       />
-      <a href="/#" onClick={props.handleModal} id="danceability">
-        Danceability
-      </a>
+      Danceability
+      <span
+        class="icon has-text-info"
+        onClick={props.handleModal}
+        id="danceability"
+      >
+        <i class="fas fa-info-circle"></i>
+      </span>
       <progress
         className="progress is-link is-medium"
         value={props.audioFeatures.danceability}
         max="1"
       />
-      <a href="/#" onClick={props.handleModal} id="energy">
-        Energy
-      </a>
+      Energy
+      <span class="icon has-text-info" onClick={props.handleModal} id="energy">
+        <i class="fas fa-info-circle"></i>
+      </span>
       <progress
         className="progress is-danger is-medium"
         value={props.audioFeatures.energy}
         max="1"
       />
-      <a href="/#" onClick={props.handleModal} id="liveness">
-        Liveness
-      </a>
+      Liveness
+      <span
+        class="icon has-text-info"
+        onClick={props.handleModal}
+        id="liveness"
+      >
+        <i class="fas fa-info-circle"></i>
+      </span>
       <progress
         className="progress is-success is-medium"
         value={props.audioFeatures.liveness}
         max="1"
       />
-      <a href="/#" onClick={props.handleModal} id="valence">
-        Valence
-      </a>
+      Valence
+      <span class="icon has-text-info" onClick={props.handleModal} id="valence">
+        <i class="fas fa-info-circle"></i>
+      </span>
       <progress
         className="progress is-warning iis-medium"
         value={props.audioFeatures.valence}
         max="1"
       />
-      <a href="/#" onClick={props.handleModal} id="instrumentalness">
-        Instrumentalness
-      </a>
+      Instrumentalness
+      <span
+        class="icon has-text-info"
+        onClick={props.handleModal}
+        id="instrumentalness"
+      >
+        <i class="fas fa-info-circle"></i>
+      </span>
       <progress
         className="progress is-info is-medium"
         value={props.audioFeatures.instrumentalness}

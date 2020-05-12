@@ -149,7 +149,7 @@ class App extends Component {
   }
 
   handleModal(e) {
-    let feature = e.target.id;
+    let feature = e.currentTarget.id;
     this.setState({ showModal: true });
     this.setState({ featureDefinition: features[feature] });
   }

@@ -51,3 +51,11 @@
   overflow-y: scroll;
   height:50vh;
 }
+
+#playlistContainer::-webkit-scrollbar {
+  display: none;
+}
+
+#trackContainer::-webkit-scrollbar {
+  display: none;
+}
