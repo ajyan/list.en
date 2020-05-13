@@ -54,9 +54,11 @@ class App extends Component {
       .getUserPlaylists() // note that we don't pass a user id
       .then(({ items }) => {
         this.setState({ playlists: items }, () => {
-          this.setState({
-            playlistId: this.state.playlists[this.state.playlistIndex].id,
-          });
+          if (this.state.playlist[this.state.playlistIndex].id) {
+            this.setState({
+              playlistId: this.state.playlists[this.state.playlistIndex].id,
+            });
+          }
         });
       })
       .catch((err) => {
