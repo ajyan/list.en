@@ -61,15 +61,19 @@ class App extends Component {
           }
         });
       })
+      .then(() => {
+        this.handlePlaylistChange(0);
+        this.handleSongChange(0);
+      })
+
       .catch((err) => {
         console.log('Error retrieving playlists', err);
       });
   }
 
-  getPlaylistTracks(id) {
-    spotifyApi.getPlaylistTracks(id).then(({ items }) => {
+  getPlaylistTracks(playlistId) {
+    spotifyApi.getPlaylistTracks(playlistId).then(({ items }) => {
       this.setState({ tracks: items });
-      this.setState({ trackIndex: 0 });
       this.calculateAverages(items);
     });
   }
@@ -133,6 +137,7 @@ class App extends Component {
 
   handlePlaylistChange(playlistIndex) {
     this.setState({ playlistIndex: playlistIndex });
+
     this.setState(
       { playlistId: this.state.playlists[playlistIndex].id },
       () => {
@@ -143,6 +148,7 @@ class App extends Component {
 
   handleSongChange(trackIndex) {
     this.setState({ trackIndex: trackIndex });
+    console.log(this.state.tracks);
     this.setState({ trackId: this.state.tracks[trackIndex].track.id }, () => {
       this.getAudioFeatures(this.state.trackId);
       this.getTrackDetails(this.state.trackId);
