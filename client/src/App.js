@@ -53,13 +53,13 @@ class App extends Component {
     spotifyApi
       .getUserPlaylists() // note that we don't pass a user id
       .then(({ items }) => {
-        if (items) {
-          this.setState({ playlists: items }, () => {
+        this.setState({ playlists: items }, () => {
+          if (this.state.playlists[this.state.playlistIndex]) {
             this.setState({
               playlistId: this.state.playlists[this.state.playlistIndex].id,
             });
-          });
-        }
+          }
+        });
       })
       .catch((err) => {
         console.log('Error retrieving playlists', err);
