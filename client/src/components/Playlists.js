@@ -11,7 +11,9 @@ function Playlists(props) {
               <div
                 id={i}
                 className="button is-large is-primary playlistButtons"
-                onClick={props.handlePlaylistChange}
+                onClick={(e) => {
+                  props.handlePlaylistChange(e.currentTarget.id);
+                }}
               >
                 {playlist.name}
               </div>

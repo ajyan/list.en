@@ -24,7 +24,7 @@ class App extends Component {
       playlistIndex: 0,
       playlistId: '',
       tracks: [],
-      trackIndex: '',
+      trackIndex: 0,
       trackId: '',
       audioFeatures: [],
       playlistFeatures: {},
@@ -53,13 +53,13 @@ class App extends Component {
     spotifyApi
       .getUserPlaylists() // note that we don't pass a user id
       .then(({ items }) => {
-        this.setState({ playlists: items }, () => {
-          if (this.state.playlist[this.state.playlistIndex].id) {
+        if (items) {
+          this.setState({ playlists: items }, () => {
             this.setState({
               playlistId: this.state.playlists[this.state.playlistIndex].id,
             });
-          }
-        });
+          });
+        }
       })
       .catch((err) => {
         console.log('Error retrieving playlists', err);
@@ -69,6 +69,7 @@ class App extends Component {
   getPlaylistTracks(id) {
     spotifyApi.getPlaylistTracks(id).then(({ items }) => {
       this.setState({ tracks: items });
+      this.setState({ trackIndex: 0 });
       this.calculateAverages(items);
     });
   }
@@ -130,8 +131,7 @@ class App extends Component {
       });
   }
 
-  handlePlaylistChange(e) {
-    let playlistIndex = e.currentTarget.id;
+  handlePlaylistChange(playlistIndex) {
     this.setState({ playlistIndex: playlistIndex });
     this.setState(
       { playlistId: this.state.playlists[playlistIndex].id },
@@ -141,8 +141,7 @@ class App extends Component {
     );
   }
 
-  handleSongChange(e) {
-    let trackIndex = e.currentTarget.id;
+  handleSongChange(trackIndex) {
     this.setState({ trackIndex: trackIndex });
     this.setState({ trackId: this.state.tracks[trackIndex].track.id }, () => {
       this.getAudioFeatures(this.state.trackId);

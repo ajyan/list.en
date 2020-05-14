@@ -5,11 +5,11 @@ function Progress(props) {
     <div className="column is-pulled-left progressBars">
       Acousticness
       <span
-        class="icon has-text-info"
+        className="icon has-text-info"
         onClick={props.handleModal}
         id="acousticness"
       >
-        <i class="fas fa-info-circle"></i>
+        <i className="fas fa-info-circle"></i>
       </span>
       <progress
         className="progress is-primary is-medium"
@@ -18,11 +18,11 @@ function Progress(props) {
       />
       Danceability
       <span
-        class="icon has-text-info"
+        className="icon has-text-info"
         onClick={props.handleModal}
         id="danceability"
       >
-        <i class="fas fa-info-circle"></i>
+        <i className="fas fa-info-circle"></i>
       </span>
       <progress
         className="progress is-link is-medium"
@@ -30,8 +30,12 @@ function Progress(props) {
         max="1"
       />
       Energy
-      <span class="icon has-text-info" onClick={props.handleModal} id="energy">
-        <i class="fas fa-info-circle"></i>
+      <span
+        className="icon has-text-info"
+        onClick={props.handleModal}
+        id="energy"
+      >
+        <i className="fas fa-info-circle"></i>
       </span>
       <progress
         className="progress is-danger is-medium"
@@ -40,11 +44,11 @@ function Progress(props) {
       />
       Liveness
       <span
-        class="icon has-text-info"
+        className="icon has-text-info"
         onClick={props.handleModal}
         id="liveness"
       >
-        <i class="fas fa-info-circle"></i>
+        <i className="fas fa-info-circle"></i>
       </span>
       <progress
         className="progress is-success is-medium"
@@ -52,8 +56,12 @@ function Progress(props) {
         max="1"
       />
       Valence
-      <span class="icon has-text-info" onClick={props.handleModal} id="valence">
-        <i class="fas fa-info-circle"></i>
+      <span
+        className="icon has-text-info"
+        onClick={props.handleModal}
+        id="valence"
+      >
+        <i className="fas fa-info-circle"></i>
       </span>
       <progress
         className="progress is-warning iis-medium"
@@ -62,11 +70,11 @@ function Progress(props) {
       />
       Instrumentalness
       <span
-        class="icon has-text-info"
+        className="icon has-text-info"
         onClick={props.handleModal}
         id="instrumentalness"
       >
-        <i class="fas fa-info-circle"></i>
+        <i className="fas fa-info-circle"></i>
       </span>
       <progress
         className="progress is-info is-medium"

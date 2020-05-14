@@ -11,7 +11,9 @@ function Tracklist(props) {
               id={i}
               key={i}
               className="button is-large is-primary is-light playlistButtons"
-              onClick={props.handleSongChange}
+              onClick={(e) => {
+                props.handleSongChange(e.currentTarget.id);
+              }}
             >
               {track.name}
             </div>
