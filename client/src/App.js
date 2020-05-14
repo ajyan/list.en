@@ -49,6 +49,7 @@ class App extends Component {
     return hashParams;
   }
 
+  // Retrieves user's playlists and initializes the first song and first playlist
   getUserPlaylists() {
     spotifyApi
       .getUserPlaylists() // note that we don't pass a user id
@@ -65,12 +66,12 @@ class App extends Component {
         this.handlePlaylistChange(0);
         this.handleSongChange(0);
       })
-
       .catch((err) => {
         console.log('Error retrieving playlists', err);
       });
   }
 
+  // Retrieves the list of tracks for a given playlist
   getPlaylistTracks(playlistId) {
     spotifyApi.getPlaylistTracks(playlistId).then(({ items }) => {
       this.setState({ tracks: items });
@@ -78,6 +79,7 @@ class App extends Component {
     });
   }
 
+  // Retrieves audio features for a specific track
   getAudioFeatures(trackId) {
     spotifyApi.getAudioFeaturesForTrack(trackId).then((res) => {
       this.setState({ audioFeatures: res }, () => {
@@ -91,12 +93,14 @@ class App extends Component {
     });
   }
 
+  // returns the audio features of a track
   getTrackDetails(trackId) {
     spotifyApi.getTrack(trackId).then((res) => {
       this.setState({ trackDetails: res });
     });
   }
 
+  // calculates the audio feature averages of the tracks provided
   calculateAverages(items) {
     let playlistFeatures = {
       acousticness: 0,
@@ -137,7 +141,6 @@ class App extends Component {
 
   handlePlaylistChange(playlistIndex) {
     this.setState({ playlistIndex: playlistIndex });
-
     this.setState(
       { playlistId: this.state.playlists[playlistIndex].id },
       () => {
@@ -148,7 +151,6 @@ class App extends Component {
 
   handleSongChange(trackIndex) {
     this.setState({ trackIndex: trackIndex });
-    console.log(this.state.tracks);
     this.setState({ trackId: this.state.tracks[trackIndex].track.id }, () => {
       this.getAudioFeatures(this.state.trackId);
       this.getTrackDetails(this.state.trackId);
@@ -173,7 +175,6 @@ class App extends Component {
             Login to Spotfiy
           </a>
         )}
-
         {this.state.loggedIn && (
           <div>
             <section className="hero is-primary is-bold">
@@ -195,7 +196,6 @@ class App extends Component {
                 {this.state.featureDefinition}
               </div>
             )}
-
             <div className="columns is-2">
               <div className="column">
                 {this.state.trackDetails.album &&
