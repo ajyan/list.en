@@ -64,6 +64,8 @@ class App extends Component {
       })
       .then(() => {
         this.handlePlaylistChange(0);
+      })
+      .then(() => {
         this.handleSongChange(0);
       })
       .catch((err) => {
@@ -171,7 +173,7 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.loggedIn && (
-          <a className="button is-large" href="http://3.22.175.136">
+          <a className="button is-large" href="http://18.189.14.222">
             Login to Spotfiy
           </a>
         )}
