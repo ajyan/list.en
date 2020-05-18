@@ -20,6 +20,8 @@ class App extends Component {
     }
     this.state = {
       loggedIn: token ? true : false,
+      showPlaylist: true,
+      showSearch: false,
       playlists: [],
       playlistIndex: 0,
       playlistId: '',
@@ -34,6 +36,8 @@ class App extends Component {
     this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
     this.handleSongChange = this.handleSongChange.bind(this);
     this.handleModal = this.handleModal.bind(this);
+    this.handleSearchButton = this.handleSearchButton.bind(this);
+    this.handlePlaylistButton = this.handlePlaylistButton.bind(this);
   }
 
   getHashParams() {
@@ -165,6 +169,16 @@ class App extends Component {
     this.setState({ featureDefinition: features[feature] });
   }
 
+  handlePlaylistButton() {
+    this.setState({ showPlaylist: true });
+    this.setState({ showSearch: false });
+  }
+
+  handleSearchButton() {
+    this.setState({ showSearch: true });
+    this.setState({ showPlaylist: false });
+  }
+
   componentDidMount() {
     this.getUserPlaylists();
   }
@@ -173,7 +187,7 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.loggedIn && (
-          <a className="button is-large" href="http://18.189.14.222">
+          <a className="button is-large" href="http://localhost:8888">
             Login to Spotfiy
           </a>
         )}
@@ -186,6 +200,22 @@ class App extends Component {
                 </div>
               </div>
             </section>
+            <nav className="level">
+              <div className="level-item has-text-centered">
+                <button
+                  className="button is-large"
+                  onClick={this.handlePlaylistButton}
+                >
+                  Playlist
+                </button>
+              </div>
+              <div
+                className="level-item has-text-centered"
+                onClick={this.handleSearchButton}
+              >
+                <button className="button is-large">Search</button>
+              </div>
+            </nav>
             <br />
             {this.state.showModal && (
               <div className="notification">
@@ -198,6 +228,7 @@ class App extends Component {
                 {this.state.featureDefinition}
               </div>
             )}
+
             <div className="columns is-2">
               <div className="column">
                 {this.state.trackDetails.album &&
@@ -216,17 +247,20 @@ class App extends Component {
                 handleModal={this.handleModal}
               />
             </div>
-            <div className="columns is-2">
-              <Playlists
-                playlists={this.state.playlists}
-                handlePlaylistChange={this.handlePlaylistChange}
-              />
-              <Tracklist
-                tracks={this.state.tracks}
-                handleSongChange={this.handleSongChange}
-              />
-              <Player playlistId={this.state.playlistId} />
-            </div>
+            {this.state.showPlaylist && (
+              <div className="columns is-2">
+                <Playlists
+                  playlists={this.state.playlists}
+                  handlePlaylistChange={this.handlePlaylistChange}
+                />
+                <Tracklist
+                  tracks={this.state.tracks}
+                  handleSongChange={this.handleSongChange}
+                />
+                <Player playlistId={this.state.playlistId} />
+              </div>
+            )}
+            {this.state.showSearch && <div>hi</div>}
           </div>
         )}
       </div>
