@@ -8,6 +8,9 @@ import Tracklist from './components/Tracklist';
 import Player from './components/Player';
 import Playlists from './components/Playlists';
 import Table from './components/Table';
+import QueryTracks from './components/QueryTracks';
+import QueryPlayer from './components/QueryPlayer';
+
 const spotifyApi = new SpotifyWebApi();
 
 class App extends Component {
@@ -20,8 +23,8 @@ class App extends Component {
     }
     this.state = {
       loggedIn: token ? true : false,
-      showPlaylist: true,
-      showSearch: false,
+      showPlaylist: false,
+      showSearch: true,
       playlists: [],
       playlistIndex: 0,
       playlistId: '',
@@ -32,12 +35,22 @@ class App extends Component {
       playlistFeatures: {},
       showModal: false,
       trackDetails: {},
+      query: '',
+      queryTracks: [],
+      playlistCreated: false,
+      audooId: '',
     };
     this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
     this.handleSongChange = this.handleSongChange.bind(this);
     this.handleModal = this.handleModal.bind(this);
     this.handleSearchButton = this.handleSearchButton.bind(this);
     this.handlePlaylistButton = this.handlePlaylistButton.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleQuerySearch = this.handleQuerySearch.bind(this);
+    this.handleQueryTrackChange = this.handleQueryTrackChange.bind(this);
+    this.createPlaylist = this.createPlaylist.bind(this);
+    this.addToPlaylist = this.addToPlaylist.bind(this);
+    this.findAudooPlaylist = this.findAudooPlaylist.bind(this);
   }
 
   getHashParams() {
@@ -68,6 +81,9 @@ class App extends Component {
       })
       .then(() => {
         this.handlePlaylistChange(0);
+        if (this.findAudooPlaylist() === false) {
+          this.createPlaylist();
+        }
       })
       .then(() => {
         this.handleSongChange(0);
@@ -87,11 +103,17 @@ class App extends Component {
 
   // Retrieves audio features for a specific track
   getAudioFeatures(trackId) {
+    let trackName = '';
+    if (this.state.showPlaylist) {
+      trackName = this.state.tracks[this.state.trackIndex].track.name;
+    } else {
+      trackName = this.state.queryTracks[this.state.trackIndex].name;
+    }
     spotifyApi.getAudioFeaturesForTrack(trackId).then((res) => {
       this.setState({ audioFeatures: res }, () => {
         buildChart(
           this.state.audioFeatures,
-          this.state.tracks[this.state.trackIndex].track.name,
+          trackName,
           this.state.playlistFeatures,
           this.state.playlists[this.state.playlistIndex].name
         );
@@ -179,6 +201,54 @@ class App extends Component {
     this.setState({ showPlaylist: false });
   }
 
+  handleInputChange(e) {
+    let query = e.target.value;
+    this.setState({ query: query });
+  }
+
+  handleQuerySearch() {
+    spotifyApi.searchTracks(this.state.query).then(({ tracks }) => {
+      this.setState({ queryTracks: tracks.items });
+    });
+  }
+
+  handleQueryTrackChange(trackIndex) {
+    this.setState({ trackIndex: trackIndex });
+    this.setState({ trackId: this.state.queryTracks[trackIndex].id }, () => {
+      this.getAudioFeatures(this.state.trackId);
+      this.getTrackDetails(this.state.trackId);
+    });
+  }
+
+  findAudooPlaylist() {
+    for (let playlist of this.state.playlists) {
+      if (playlist.name === 'Audoo') {
+        this.setState({ playlistCreated: true });
+        this.setState({ audooId: playlist.id });
+        return true;
+      }
+    }
+    return false;
+  }
+
+  createPlaylist() {
+    spotifyApi
+      .getMe()
+      .then(({ id }) => {
+        spotifyApi.createPlaylist(id, { name: 'Audoo' });
+        this.setState({ playlistCreated: true });
+      })
+      .catch((err) => {
+        console.log('error creating playlist: ', err);
+      });
+  }
+
+  addToPlaylist() {
+    spotifyApi.addTracksToPlaylist(this.state.audooId, [
+      `spotify:track:${this.state.trackId}`,
+    ]);
+  }
+
   componentDidMount() {
     this.getUserPlaylists();
   }
@@ -260,7 +330,46 @@ class App extends Component {
                 <Player playlistId={this.state.playlistId} />
               </div>
             )}
-            {this.state.showSearch && <div>hi</div>}
+            {this.state.showSearch && (
+              <div className="columns is-2">
+                <div className="column box">
+                  <nav className="level" />
+                  <nav className="level">
+                    <div className="level-item has-text-centered">
+                      <input
+                        className="input is-primary"
+                        type="text"
+                        placeholder="Song Name"
+                        onChange={this.handleInputChange}
+                      />{' '}
+                    </div>
+                    <div className="level-item has-text-centered">
+                      <button
+                        className="button"
+                        onClick={this.handleQuerySearch}
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </nav>
+                  <nav className="level">
+                    <div className="level-item has-text-centered">
+                      <button
+                        className="button is-primary"
+                        onClick={this.addToPlaylist}
+                      >
+                        Add To Playlist
+                      </button>
+                    </div>
+                  </nav>
+                </div>
+                <QueryTracks
+                  tracks={this.state.queryTracks}
+                  handleQueryTrackChange={this.handleQueryTrackChange}
+                />
+                <QueryPlayer trackId={this.state.trackId} />
+              </div>
+            )}
           </div>
         )}
       </div>
