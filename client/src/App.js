@@ -95,10 +95,15 @@ class App extends Component {
 
   // Retrieves the list of tracks for a given playlist
   getPlaylistTracks(playlistId) {
-    spotifyApi.getPlaylistTracks(playlistId).then(({ items }) => {
-      this.setState({ tracks: items });
-      this.calculateAverages(items);
-    });
+    spotifyApi
+      .getPlaylistTracks(playlistId)
+      .then(({ items }) => {
+        this.setState({ tracks: items });
+        this.calculateAverages(items);
+      })
+      .catch((err) => {
+        console.log('error getting list of tracks for playlist: ', err);
+      });
   }
 
   // Retrieves audio features for a specific track
@@ -109,23 +114,33 @@ class App extends Component {
     } else {
       trackName = this.state.queryTracks[this.state.trackIndex].name;
     }
-    spotifyApi.getAudioFeaturesForTrack(trackId).then((res) => {
-      this.setState({ audioFeatures: res }, () => {
-        buildChart(
-          this.state.audioFeatures,
-          trackName,
-          this.state.playlistFeatures,
-          this.state.playlists[this.state.playlistIndex].name
-        );
+    spotifyApi
+      .getAudioFeaturesForTrack(trackId)
+      .then((res) => {
+        this.setState({ audioFeatures: res }, () => {
+          buildChart(
+            this.state.audioFeatures,
+            trackName,
+            this.state.playlistFeatures,
+            this.state.playlists[this.state.playlistIndex].name
+          );
+        });
+      })
+      .catch((err) => {
+        console.log('error getting audio features for track: ', err);
       });
-    });
   }
 
   // returns the audio features of a track
   getTrackDetails(trackId) {
-    spotifyApi.getTrack(trackId).then((res) => {
-      this.setState({ trackDetails: res });
-    });
+    spotifyApi
+      .getTrack(trackId)
+      .then((res) => {
+        this.setState({ trackDetails: res });
+      })
+      .catch((err) => {
+        console.log('error getting track details: ', err);
+      });
   }
 
   // calculates the audio feature averages of the tracks provided
@@ -207,9 +222,14 @@ class App extends Component {
   }
 
   handleQuerySearch() {
-    spotifyApi.searchTracks(this.state.query).then(({ tracks }) => {
-      this.setState({ queryTracks: tracks.items });
-    });
+    spotifyApi
+      .searchTracks(this.state.query)
+      .then(({ tracks }) => {
+        this.setState({ queryTracks: tracks.items });
+      })
+      .catch((err) => {
+        console.log('error executing query: ', err);
+      });
   }
 
   handleQueryTrackChange(trackIndex) {
@@ -244,9 +264,13 @@ class App extends Component {
   }
 
   addToPlaylist() {
-    spotifyApi.addTracksToPlaylist(this.state.audooId, [
-      `spotify:track:${this.state.trackId}`,
-    ]);
+    spotifyApi
+      .addTracksToPlaylist(this.state.audooId, [
+        `spotify:track:${this.state.trackId}`,
+      ])
+      .catch((err) => {
+        console.log('error adding song to playlist: ', err);
+      });
   }
 
   componentDidMount() {
