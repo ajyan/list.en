@@ -15,7 +15,7 @@ var cookieParser = require('cookie-parser');
 
 var client_id = process.env.REACT_APP_CLIENT_ID; // Your client id
 var client_secret = process.env.REACT_APP_CLIENT_SECRET; // Your secret
-var redirect_uri = 'http://localhost:8888/callback'; // Your redirect uri
+var redirect_uri = 'http://3.128.189.63/callback'; // Your redirect uri
 
 /**
  * Generates a random string containing numbers and letters
@@ -109,7 +109,7 @@ app.get('/callback', function(req, res) {
 
         // we can also pass the token to the browser to make requests from there
         res.redirect(
-          'http://localhost:3000/#' +
+          'http://3.15.176.163/#' +
             querystring.stringify({
               access_token: access_token,
               refresh_token: refresh_token,
