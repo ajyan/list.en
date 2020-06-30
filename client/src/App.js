@@ -38,7 +38,7 @@ class App extends Component {
       query: '',
       queryTracks: [],
       playlistCreated: false,
-      listenId: '',
+      audooId: '',
       addingTrack: false,
     };
 
@@ -52,7 +52,7 @@ class App extends Component {
     this.handleQueryTrackChange = this.handleQueryTrackChange.bind(this);
     this.createPlaylist = this.createPlaylist.bind(this);
     this.addToPlaylist = this.addToPlaylist.bind(this);
-    this.findListenPlaylist = this.findListenPlaylist.bind(this);
+    this.findAudooPlaylist = this.findAudooPlaylist.bind(this);
   }
 
   getHashParams() {
@@ -83,7 +83,7 @@ class App extends Component {
       })
       .then(() => {
         this.handlePlaylistChange(0);
-        if (this.findListenPlaylist() === false) {
+        if (this.findAudooPlaylist() === false) {
           this.createPlaylist();
         }
       })
@@ -242,11 +242,11 @@ class App extends Component {
     });
   }
 
-  findListenPlaylist() {
+  findAudooPlaylist() {
     for (let playlist of this.state.playlists) {
-      if (playlist.name === 'List.en') {
+      if (playlist.name === 'Audoo') {
         this.setState({ playlistCreated: true });
-        this.setState({ ListenId: playlist.id });
+        this.setState({ audooId: playlist.id });
         return true;
       }
     }
@@ -257,7 +257,7 @@ class App extends Component {
     spotifyApi
       .getMe()
       .then(({ id }) => {
-        spotifyApi.createPlaylist(id, { name: 'List.en' });
+        spotifyApi.createPlaylist(id, { name: 'Audoo' });
         this.setState({ playlistCreated: true });
       })
       .catch((err) => {
@@ -268,7 +268,7 @@ class App extends Component {
   addToPlaylist() {
     this.setState({ addingTrack: true });
     spotifyApi
-      .addTracksToPlaylist(this.state.listenId, [
+      .addTracksToPlaylist(this.state.audooId, [
         `spotify:track:${this.state.trackId}`,
       ])
       .catch((err) => {
