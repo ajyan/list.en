@@ -16,7 +16,7 @@ function Table(props) {
   let tempo = props.audioFeatures.tempo.toFixed(0);
   return (
     <div className="table-container">
-      <table className="table is-hoverable is-bordered is-striped">
+      <table className="table is-hoverable is-bordered is-striped is-fullwidth">
         <thead>
           <tr>
             <th>Detail</th>

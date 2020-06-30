@@ -23,8 +23,8 @@ class App extends Component {
     }
     this.state = {
       loggedIn: token ? true : false,
-      showPlaylist: true,
-      showSearch: false,
+      showPlaylist: false,
+      showSearch: true,
       playlists: [],
       playlistIndex: 0,
       playlistId: '',
@@ -39,7 +39,9 @@ class App extends Component {
       queryTracks: [],
       playlistCreated: false,
       audooId: '',
+      addingTrack: false,
     };
+
     this.handlePlaylistChange = this.handlePlaylistChange.bind(this);
     this.handleSongChange = this.handleSongChange.bind(this);
     this.handleModal = this.handleModal.bind(this);
@@ -264,12 +266,18 @@ class App extends Component {
   }
 
   addToPlaylist() {
+    this.setState({ addingTrack: true });
     spotifyApi
       .addTracksToPlaylist(this.state.audooId, [
         `spotify:track:${this.state.trackId}`,
       ])
       .catch((err) => {
         console.log('error adding song to playlist: ', err);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          this.setState({ addingTrack: false });
+        }, 1000);
       });
   }
 
@@ -281,7 +289,7 @@ class App extends Component {
     return (
       <div className="App">
         {!this.state.loggedIn && (
-          <a className="button is-large" href="http://18.189.14.222">
+          <a className="button is-large" href="http://3.128.189.63">
             Login to Spotfiy
           </a>
         )}
@@ -378,12 +386,24 @@ class App extends Component {
                   </nav>
                   <nav className="level">
                     <div className="level-item has-text-centered">
-                      <button
-                        className="button is-primary"
-                        onClick={this.addToPlaylist}
-                      >
-                        Add To Playlist
-                      </button>
+                      {!this.state.addingTrack && (
+                        <button
+                          className="button is-primary"
+                          onClick={this.addToPlaylist}
+                          type="submit"
+                        >
+                          Add To Playlist
+                        </button>
+                      )}
+                      {this.state.addingTrack && (
+                        <button
+                          className="button is-primary is-loading"
+                          onClick={this.addToPlaylist}
+                          type="submit"
+                        >
+                          Add To Playlist
+                        </button>
+                      )}
                     </div>
                   </nav>
                 </div>
