@@ -3,6 +3,7 @@
   <head>
     <title>List.en</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./index.css">
     <style type="text/css">
       #login, #loggedin {
         display: none;
@@ -13,26 +14,52 @@
         white-space: nowrap;
         width: 500px;
       }
+      #grad {
+        background-image: linear-gradient(to bottom right, #05d1b2, #06e6ea);  
+        background-size: cover;
+        margin-bottom: 0;
+        min-height: 30%;
+        background-repeat: no-repeat;
+        background-position: center;
+        -webkit-background-size: cover;
+        max-height:100%;
+        max-width: 100%;
+      }
+      .vertical-center {
+        min-height: 100%;  
+        min-height: 100vh; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .heading {
+        color: white
+      }
     </style>
   </head>
 
   <body>
-    <div class="container">
-      <div id="login">
-        <h1 class="row text-center">List.en</h1>
-        <h2 class="row text-center">Please log in with your Spotify Account to generate data on your playlists</h2>
-        <div class="row">
-        <a href="/login" class="btn btn-primary">Log in with Spotify</a>
-        </div>
-      </div>
-      <div id="loggedin">
-        <div id="user-profile">
-        </div>
-        <div id="oauth">
-        </div>
-        <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
-      </div>
-    </div>
+    <div class="container h-100 vertical-center" >
+      <div class="row align-items-center h-100 d-flex">
+        <div class="col-6 mx-auto">
+          <div class="jumbotron heading"  id ="grad">
+              <div id="login" >
+                <h1 class="row text-light display-3 heading">List.en</h1>
+                <h3 class="row text-center">
+                  <p class='font-italic'>Please log in with your Spotify Account to generate data on your playlists</p>
+                </h3>
+                <div class="row text-center">
+                  <a href="/login" class="btn btn-primary btn-lg">Log in with Spotify</a>
+                </div>
+              </div>
+              <div id="loggedin">
+                <div id="user-profile">
+                </div>
+              <div id="oauth">
+              </div>
+                <button class="btn btn-default" id="obtain-new-token">Obtain new token using the refresh token</button>
+              </div>
+            </div>
 
     <script id="user-profile-template" type="text/x-handlebars-template">
       <h1>Logged in as {{display_name}}</h1>
@@ -141,5 +168,9 @@
       })();
     </script>
   </body>
+</div>
+
+</div>
+</div>
 </html>
 
