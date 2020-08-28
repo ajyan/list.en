@@ -23,8 +23,8 @@ class App extends Component {
     }
     this.state = {
       loggedIn: token ? true : false,
-      showPlaylist: false,
-      showSearch: true,
+      showPlaylist: true,
+      showSearch: false,
       playlists: [],
       playlistIndex: 0,
       playlistId: '',
